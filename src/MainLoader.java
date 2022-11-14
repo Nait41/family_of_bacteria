@@ -11,20 +11,38 @@ import java.io.IOException;
 
 public class MainLoader extends JFrame {
     Workbook workbook;
-    String fileName;
-    public MainLoader(File file) throws IOException, InvalidFormatException {
-        String filePath = file.getPath().replace(".tsv", ".xlsx");
-        this.fileName = file.getName().replace(".tsv", ".xlsx");
-        workbook = new XSSFWorkbook(new FileInputStream(filePath));
+    String xlsxDirectoryPath;
+    int numberFile;
+    public MainLoader(String xlsxDirectoryPath, int numberFile) throws IOException, InvalidFormatException {
+        this.xlsxDirectoryPath = xlsxDirectoryPath;
+        this.numberFile = numberFile;
+        workbook = new XSSFWorkbook();
     }
 
-    public void setBacteriaFamily(InfoList infoList){
-        workbook.createSheet("Семейства");
-        for (int i = 0; i < infoList.bacteriaFamily.size();i++){
-            workbook.getSheet("Семейства").createRow(i).createCell(0).setCellValue(infoList.bacteriaFamily.get(i).get(0));
-            workbook.getSheet("Семейства").setColumnWidth(0, 10000);
-            workbook.getSheet("Семейства").getRow(i).createCell(1).setCellValue(infoList.bacteriaFamily.get(i).get(1));
-            workbook.getSheet("Семейства").getRow(i).createCell(2).setCellValue(infoList.bacteriaFamily.get(i).get(2));
+    public void setPhylum(InfoList infoList){
+        workbook.createSheet("Phylum");
+        for (int i = 0; i < infoList.phylumTable.size();i++){
+            workbook.getSheet("Phylum").createRow(i).createCell(0).setCellValue(infoList.phylumTable.get(i).get(0));
+            workbook.getSheet("Phylum").setColumnWidth(0, 10000);
+            workbook.getSheet("Phylum").getRow(i).createCell(1).setCellValue(infoList.phylumTable.get(i).get(numberFile+1));
+        }
+    }
+
+    public void setClass(InfoList infoList){
+        workbook.createSheet("Class");
+        for (int i = 0; i < infoList.classTable.size();i++){
+            workbook.getSheet("Class").createRow(i).createCell(0).setCellValue(infoList.classTable.get(i).get(0));
+            workbook.getSheet("Class").setColumnWidth(0, 10000);
+            workbook.getSheet("Class").getRow(i).createCell(1).setCellValue(infoList.classTable.get(i).get(numberFile+1));
+        }
+    }
+
+    public void setGenus(InfoList infoList){
+        workbook.createSheet("Genus");
+        for (int i = 0; i < infoList.genusTable.size();i++){
+            workbook.getSheet("Genus").createRow(i).createCell(0).setCellValue(infoList.genusTable.get(i).get(0));
+            workbook.getSheet("Genus").setColumnWidth(0, 10000);
+            workbook.getSheet("Genus").getRow(i).createCell(1).setCellValue(infoList.genusTable.get(i).get(numberFile+1));
         }
     }
 
@@ -32,8 +50,8 @@ public class MainLoader extends JFrame {
         workbook.close();
     }
 
-    public void saveFile(String dirUnloadPath) throws IOException {
-        workbook.write(new FileOutputStream(dirUnloadPath + "\\" + fileName));
+    public void saveFile(InfoList infoList) throws IOException {
+        workbook.write(new FileOutputStream(xlsxDirectoryPath + "\\" + infoList.idFileName.get(numberFile) + ".xlsx"));
     }
 }
 

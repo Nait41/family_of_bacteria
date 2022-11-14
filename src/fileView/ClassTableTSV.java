@@ -28,9 +28,11 @@ public class ClassTableTSV {
             String line;
             line = scanner.nextLine();
             String[] elements = line.split("\t");
+            infoList.classTable.add(new ArrayList<>());
             for (int i = 0; i < elements.length; i++){
-                infoList.classTable.add(new ArrayList<>());
-                infoList.classTable.get(k).add(elements[i]);
+                if(elements[i].length()>0) {
+                    infoList.classTable.get(k).add(elements[i]);
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class TSVOpen {
@@ -27,7 +28,11 @@ public class TSVOpen {
         line = scanner.nextLine();
         String[] elements = line.split("\t");
         for (int i = 0; i < elements.length; i++){
-            infoList.idFileName.add(elements[i]);
+            if(elements[i].length()>0){
+                if(elements[i].toLowerCase(Locale.ROOT).charAt(0) >= 'a' && elements[i].toLowerCase(Locale.ROOT).charAt(0) <= 'z'){
+                    infoList.idFileName.add(elements[i]);
+                }
+            }
         }
     }
 

@@ -25,9 +25,11 @@ public class GenusTableTSV {
             String line;
             line = scanner.nextLine();
             String[] elements = line.split("\t");
+            infoList.genusTable.add(new ArrayList<>());
             for (int i = 0; i < elements.length; i++){
-                infoList.genusTable.add(new ArrayList<>());
-                infoList.genusTable.get(k).add(elements[i]);
+                if(elements[i].length()>0) {
+                    infoList.genusTable.get(k).add(elements[i]);
+                }
             }
         }
     }

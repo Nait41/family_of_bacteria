@@ -6,6 +6,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class PhylumTableTSV {
@@ -25,9 +26,11 @@ public class PhylumTableTSV {
             String line;
             line = scanner.nextLine();
             String[] elements = line.split("\t");
+            infoList.phylumTable.add(new ArrayList<>());
             for (int i = 0; i < elements.length; i++){
-                infoList.phylumTable.add(new ArrayList<>());
-                infoList.phylumTable.get(k).add(elements[i]);
+                if(elements[i].length()>0) {
+                    infoList.phylumTable.get(k).add(elements[i]);
+                }
             }
         }
     }

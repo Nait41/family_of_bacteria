@@ -25,9 +25,11 @@ public class SpeciesTableTSV {
             String line;
             line = scanner.nextLine();
             String[] elements = line.split("\t");
+            infoList.speciesTable.add(new ArrayList<>());
             for (int i = 0; i < elements.length; i++){
-                infoList.speciesTable.add(new ArrayList<>());
-                infoList.speciesTable.get(k).add(elements[i]);
+                if(elements[i].length()>0) {
+                    infoList.speciesTable.get(k).add(elements[i]);
+                }
             }
         }
     }

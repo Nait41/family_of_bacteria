@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class bioIndexTableTSV {
+public class BioIndexTableTSV {
     Scanner scanner;
 
-    public bioIndexTableTSV(File file) throws IOException, InvalidFormatException {
+    public BioIndexTableTSV(File file) throws IOException, InvalidFormatException {
         scanner = new Scanner(file);
     }
 

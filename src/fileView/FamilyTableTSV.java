@@ -25,9 +25,11 @@ public class FamilyTableTSV {
             String line;
             line = scanner.nextLine();
             String[] elements = line.split("\t");
+            infoList.familyTable.add(new ArrayList<>());
             for (int i = 0; i < elements.length; i++){
-                infoList.familyTable.add(new ArrayList<>());
-                infoList.familyTable.get(k).add(elements[i]);
+                if(elements[i].length()>0) {
+                    infoList.familyTable.get(k).add(elements[i]);
+                }
             }
         }
     }
