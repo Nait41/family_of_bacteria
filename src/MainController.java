@@ -25,7 +25,7 @@ public class MainController {
     List<File> tsvDirectory;
     String xlsxDirectoryPath;
     boolean checkLoad, checkUnload, checkStart = false;
-    int counter, counter_files;
+    int counter;
     public static String errorMessageStr = "";
 
     @FXML
@@ -41,7 +41,7 @@ public class MainController {
     private Button dirUnloadButton;
 
     @FXML
-    private Text loadStatus;
+    private Text numberTSVFile;
 
     @FXML
     private Text loadStatus_end;
@@ -120,7 +120,6 @@ public class MainController {
         ImageView closeView = new ImageView(closeImage);
         closeButton.graphicProperty().setValue(closeView);
 
-
         int r = 60;
         startButton.setShape(new Circle(r));
         startButton.setMinSize(r*2, r*2);
@@ -137,9 +136,9 @@ public class MainController {
         dirLoadButton.setOnAction(actionEvent -> {
             if(!checkStart)
             {
-                loadStatus.setText("");
                 loadStatus_end.setText("");
                 loadStatusFileNumber.setText("");
+                numberTSVFile.setText("");
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 File dir = directoryChooser.showDialog(new Stage());
                 File[] file = dir.listFiles();
@@ -148,7 +147,7 @@ public class MainController {
             }
             else
             {
-                errorMessageStr = "Происходит обработка файлов. Повторите попытку попытку позже...";
+                errorMessageStr = "Происходит формирование файлов. Повторите попытку попытку позже...";
                 ErrorController errorController = new ErrorController();
                 try {
                     errorController.start(new Stage());
@@ -161,9 +160,9 @@ public class MainController {
         dirUnloadButton.setOnAction(actionEvent -> {
                     if(!checkStart)
                     {
-                        loadStatus.setText("");
                         loadStatus_end.setText("");
                         loadStatusFileNumber.setText("");
+                        numberTSVFile.setText("");
                         DirectoryChooser directoryChooser = new DirectoryChooser();
                         File dir = directoryChooser.showDialog(new Stage());
                         xlsxDirectoryPath = dir.getPath();
@@ -172,7 +171,7 @@ public class MainController {
                     }
                     else
                     {
-                        errorMessageStr = "Происходит обработка файлов. Повторите попытку попытку позже...";
+                        errorMessageStr = "Происходит формирование файлов. Повторите попытку попытку позже...";
                         ErrorController errorController = new ErrorController();
                         try {
                             errorController.start(new Stage());
@@ -184,123 +183,124 @@ public class MainController {
         );
         startButton.setOnAction(actionEvent -> {
                     if(!checkStart){
-                        loadStatus.setText("");
                         loadStatus_end.setText("");
                         loadStatusFileNumber.setText("");
+                        numberTSVFile.setText("");
                         if(checkLoad && checkUnload){
-                                if(tsvDirectory.size() != 0)
-                                {
-                                    checkStart = true;
-                                    new Thread(){
-                                        @Override
-                                        public void run(){
-                                            counter_files = 0;
-                                            infoList = new InfoList();
-                                            for (int i = 0; i<tsvDirectory.size();i++)
+                            if(tsvDirectory.size() != 0)
+                            {
+                                checkStart = true;
+                                counter=0;
+                                new Thread(){
+                                    @Override
+                                    public void run(){
+                                        infoList = new InfoList();
+                                        for (int i = 0; i<tsvDirectory.size();i++)
+                                        {
+                                            if(tsvDirectory.get(i).getPath().contains(".tsv"))
                                             {
-                                                if(tsvDirectory.get(i).getPath().contains(".tsv"))
-                                                {
-                                                    loadStatusFileNumber.setText("Обработка " + (counter_files+1) + " 'tsv' файла");
-                                                    if(tsvDirectory.get(i).getName().contains("Phylum")){
-                                                        try {
-                                                            TSVOpen tsvOpen = new TSVOpen(tsvDirectory.get(i));
-                                                            PhylumTableTSV phylumTableTSV = new PhylumTableTSV(tsvDirectory.get(i));
-                                                            tsvOpen.getIdFileName(infoList);
-                                                            tsvOpen.getClose();
-                                                            phylumTableTSV.getPhylumTable(infoList);
-                                                            phylumTableTSV.getClose();
-                                                            tsvOpen.getClose();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        } catch (InvalidFormatException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        counter_files++;
-                                                    } else if(tsvDirectory.get(i).getName().contains("Class")){
-                                                        try {
-                                                            ClassTableTSV classTableTSV = new ClassTableTSV(tsvDirectory.get(i));
-                                                            classTableTSV.getClassTable(infoList);
-                                                            classTableTSV.getClose();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        } catch (InvalidFormatException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        counter_files++;
-                                                    } else if(tsvDirectory.get(i).getName().contains("Genus")){
-                                                        try {
-                                                            GenusTableTSV genusTableTSV = new GenusTableTSV(tsvDirectory.get(i));
-                                                            genusTableTSV.getGenusTable(infoList);
-                                                            genusTableTSV.getClose();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        } catch (InvalidFormatException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        counter_files++;
-                                                    } else if(tsvDirectory.get(i).getName().contains("Species")){
-                                                        try {
-                                                            SpeciesTableTSV speciesTableTSV = new SpeciesTableTSV(tsvDirectory.get(i));
-                                                            speciesTableTSV.getSpeciesTable(infoList);
-                                                            speciesTableTSV.getClose();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        } catch (InvalidFormatException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        counter_files++;
-                                                    } else if(tsvDirectory.get(i).getName().contains("Family")){
-                                                        try {
-                                                            FamilyTableTSV familyTableTSV = new FamilyTableTSV(tsvDirectory.get(i));
-                                                            familyTableTSV.getFamilyTable(infoList);
-                                                            familyTableTSV.getClose();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        } catch (InvalidFormatException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        counter_files++;
-                                                    } else if(tsvDirectory.get(i).getName().contains("alpha")){
-                                                        try {
-                                                            BioIndexTableTSV bioIndexTableTSV = new BioIndexTableTSV(tsvDirectory.get(i));
-                                                            bioIndexTableTSV.getBioIndexTable(infoList);
-                                                            bioIndexTableTSV.getClose();
-                                                        } catch (IOException e) {
-                                                            e.printStackTrace();
-                                                        } catch (InvalidFormatException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        counter_files++;
+                                                numberTSVFile.setText("Сбор данных файла " + tsvDirectory.get(i).getName().replace(".tsv", ""));
+                                                if(tsvDirectory.get(i).getName().contains("Phylum")){
+                                                    try {
+                                                        TSVOpen tsvOpen = new TSVOpen(tsvDirectory.get(i));
+                                                        PhylumTableTSV phylumTableTSV = new PhylumTableTSV(tsvDirectory.get(i));
+                                                        tsvOpen.getIdFileName(infoList);
+                                                        tsvOpen.getClose();
+                                                        phylumTableTSV.getPhylumTable(infoList);
+                                                        phylumTableTSV.getClose();
+                                                        tsvOpen.getClose();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InvalidFormatException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else if(tsvDirectory.get(i).getName().contains("Class")){
+                                                    try {
+                                                        ClassTableTSV classTableTSV = new ClassTableTSV(tsvDirectory.get(i));
+                                                        classTableTSV.getClassTable(infoList);
+                                                        classTableTSV.getClose();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InvalidFormatException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else if(tsvDirectory.get(i).getName().contains("Genus")){
+                                                    try {
+                                                        GenusTableTSV genusTableTSV = new GenusTableTSV(tsvDirectory.get(i));
+                                                        genusTableTSV.getGenusTable(infoList);
+                                                        genusTableTSV.getClose();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InvalidFormatException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else if(tsvDirectory.get(i).getName().contains("Species")){
+                                                    try {
+                                                        SpeciesTableTSV speciesTableTSV = new SpeciesTableTSV(tsvDirectory.get(i));
+                                                        speciesTableTSV.getSpeciesTable(infoList);
+                                                        speciesTableTSV.getClose();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InvalidFormatException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else if(tsvDirectory.get(i).getName().contains("Family")){
+                                                    try {
+                                                        FamilyTableTSV familyTableTSV = new FamilyTableTSV(tsvDirectory.get(i));
+                                                        familyTableTSV.getFamilyTable(infoList);
+                                                        familyTableTSV.getClose();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InvalidFormatException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else if(tsvDirectory.get(i).getName().contains("alpha")){
+                                                    try {
+                                                        BioIndexTableTSV bioIndexTableTSV = new BioIndexTableTSV(tsvDirectory.get(i));
+                                                        bioIndexTableTSV.getBioIndexTable(infoList);
+                                                        bioIndexTableTSV.getClose();
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InvalidFormatException e) {
+                                                        e.printStackTrace();
                                                     }
                                                 }
                                             }
-                                            for (int i = 0; i < infoList.idFileName.size(); i++){
-                                                loadStatusFileNumber.setText("Обработка " + (i+1) + " 'xlsx' файла");
-                                                try {
-                                                    MainLoader mainLoader = new MainLoader(xlsxDirectoryPath, i);
-                                                    mainLoader.setPhylum(infoList);
-                                                    mainLoader.saveFile(infoList);
-                                                    mainLoader.getClose();
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                } catch (InvalidFormatException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                            loadStatusFileNumber.setText("");
-                                            loadStatus_end.setText("Успешно обработано " + counter_files + " файла(ов)!");
-                                            checkStart = false;
                                         }
-                                    }.start();
-                                } else
-                                {
-                                    errorMessageStr = "Выбранная папка загрузки является пустой...";
-                                    ErrorController errorController = new ErrorController();
-                                    try {
-                                        errorController.start(new Stage());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                        numberTSVFile.setText("");
+                                        for (int i = 0; i < infoList.idFileName.size(); i++){
+                                            loadStatusFileNumber.setText("Формирование файла " + infoList.idFileName.get(i));
+                                            try {
+                                                MainLoader mainLoader = new MainLoader(xlsxDirectoryPath, i);
+                                                mainLoader.setPhylum(infoList);
+                                                mainLoader.setClass(infoList);
+                                                mainLoader.setGenus(infoList);
+                                                mainLoader.setSpecies(infoList);
+                                                mainLoader.setFamily(infoList);
+                                                mainLoader.setBioIndex(infoList);
+                                                mainLoader.saveFile(infoList);
+                                                mainLoader.getClose();
+                                                counter++;
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            } catch (InvalidFormatException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        loadStatusFileNumber.setText("");
+                                        loadStatus_end.setText("Успешно сформировано " + counter + " файла(ов)!");
+                                        checkStart = false;
                                     }
+                                }.start();
+                            } else
+                            {
+                                errorMessageStr = "Выбранная папка загрузки является пустой...";
+                                ErrorController errorController = new ErrorController();
+                                try {
+                                    errorController.start(new Stage());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         } else {
                             errorMessageStr = "Вы не указаали директорию загрузки или директорию выгрузки...";
